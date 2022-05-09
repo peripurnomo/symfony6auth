@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ app_name }} Profile
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <p>My name is {{ user.fullname|title }}.</p>
+        <p>I joined in {{ user.joinAt ? user.joinAt|date('M Y') : '' }}.</p>
+
+        <p>
+            You can find me using my username 
+            <span class="text-success">{{ user.username }}</span>
+            <br> and e-mail
+            <span class="text-success">{{ user.email }}</span>.
+        </p>
+    </div>
+{% endblock %}

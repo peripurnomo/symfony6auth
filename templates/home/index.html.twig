@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ app_name }} - Home
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <p>You're logged in as <span class="text-primary">{{ app.user.fullname|title }}</span>. <a class="text-danger" href="{{ logout_path() }}">Logout.</a></p>
+    </div>
+{% endblock %}

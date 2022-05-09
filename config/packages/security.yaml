@@ -1,0 +1,112 @@
+security:
+    enable_authenticator_manager: true
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            provider: app_user_provider
+            custom_authenticator: App\Security\LoginFormAuthenticator
+
+            # This allows the user to login by submitting a username and password
+            # Reference: https://symfony.com/doc/current/security/form_login_setup.html
+            form_login:
+                # The route name that the login form submits to
+                check_path: app_login
+
+                # The name of the route where the login form lives
+                # When the user tries to access a protected page, they are redirected here
+                login_path: app_login
+
+                # Secure the login form against CSRF
+                # Reference: https://symfony.com/doc/current/security/csrf.html
+                enable_csrf: true
+
+                # The page users are redirect to when there is no previous page stored in the
+                # session (for example when the users access directly to the login page).
+                default_target_path: app_home
+
+            # When using a custom authenticator, you must add a RememberMeBadge manually to your custom authenticator
+            remember_me:
+                # The name of the cookie used to keep the user logged in. If you enable the remember_me feature in several firewalls of the same application, make sure to choose a different name for the cookie of each firewall. Otherwise, you'll face lots of security related problems.
+                name: 'REMEMBER_ME'
+
+                # The path where the cookie associated with this feature is used. By default the cookie will be applied to the entire website but you can restrict to a specific section (e.g. /forum, /admin).
+                path: '/'
+
+                # see template/security/login.html.twig
+                remember_me_parameter: '_remember_me'
+
+                # see .env
+                secret:   '%kernel.secret%'
+
+                # The number of seconds after which the cookie will be expired. This defines the maximum time between two visits for the user to remain authenticated. default value: 31536000 i.e. 1 year in seconds
+                lifetime: 604800 # 1 week in seconds
+
+                # store token into database
+                token_provider:
+                    doctrine: true
+
+                # The domain where the cookie associated with this feature is used. By default cookies use the current domain obtained from $_SERVER. default null
+                domain: null
+
+                # If true, the cookie associated with this feature is sent to the user through an HTTPS secure connection. default value: false
+                secure: false
+
+                # If true, the cookie associated with this feature is accessible only through the HTTP protocol. This means that the cookie won't be accessible by scripting languages, such as JavaScript. default value: true
+                httponly: true
+
+                # If set to strict, the cookie associated with this feature will not be sent along with cross-site requests, even when following a regular link. default value: null
+                samesite: null
+
+                # by default, the feature is enabled by checking a
+                # checkbox in the login form (see below), uncomment the
+                # following line (set to true) to always enable it.
+                always_remember_me: false
+
+            logout:
+                path: app_logout
+
+                # where to redirect after logout
+                target: app_login
+                
+                csrf_parameter: logout
+                csrf_token_generator: security.csrf.token_manager
+
+            entry_point: App\Security\LoginFormAuthenticator
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#the-firewall
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_USER }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon

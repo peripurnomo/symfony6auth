@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>{% block title %}Welcome to {{ app_name }}{% endblock %}</title>
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        {% block header %}
+            <header>
+                {% block navbar %}
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        {{ include('components/navbar.html.twig') }}
+                    {% endif %}
+                {% endblock %}
+
+                <div>
+                    {% block flasher %}
+                        {{ include('components/flasher.html.twig') }}
+                    {% endblock %}
+                </div>
+            </header>
+        {% endblock %}
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer>
+            {% block footer %}{% endblock %}
+        </footer>
+    </body>
+</html>
